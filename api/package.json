@@ -1,0 +1,21 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "restify": "4.3.0",
+    "mongoose": "4.7.7",
+    "request": "2.79.0",
+    "twitter": "1.7.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.18.0",
+    "babel-register": "6.18.0",
+    "babel-preset-latest": "6.16.0",
+    "nodemon": "1.11.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js --exec babel-node --presets latest"
+  }
+}

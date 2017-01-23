@@ -1,0 +1,39 @@
+version: '2'
+services:
+  api:
+    build: ./api
+    command: npm start
+    environment:
+      - NODE_ENV=development
+      - PORT=${API_PORT}
+      - DB_URI=db:${DB_PORT}
+    links:
+      - db
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - ./api:/home/app/api
+      - /home/app/api/node_modules
+  db:
+    image: mongo:latest
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes_from:
+      - storage
+  storage:
+    image: tianon/true
+    volumes:
+      - /data/db
+  web:
+    build: ./web
+    command: npm start
+    depends_on:
+      - api
+    environment:
+      - NODE_ENV=development
+      - PORT=${WEB_PORT}
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+    volumes:
+      - ./web:/home/app/web
+      - /home/app/web/node_modules

@@ -1,0 +1,52 @@
+version: '2'
+services:
+  api:
+    build: ./api
+    command: npm run start:dev
+    environment:
+      - NODE_ENV=development
+      - PORT=${API_PORT}
+      - DB_URI=db:${DB_PORT}
+      - NLP_URL=http://nlp:${NLP_PORT}
+      - TWITTER_CONSUMER_KEY=${TWITTER_CONSUMER_KEY}
+      - TWITTER_CONSUMER_SECRET=${TWITTER_CONSUMER_SECRET}
+      - TWITTER_ACCESS_TOKEN_KEY=${TWITTER_ACCESS_TOKEN_KEY}
+      - TWITTER_ACCESS_TOKEN_SECRET=${TWITTER_ACCESS_TOKEN_SECRET}
+    links:
+      - db
+      - nlp
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - ./api:/home/app/api
+      - /home/app/api/node_modules
+
+  db:
+    image: mongo:latest
+    volumes_from:
+      - storage
+
+  storage:
+    image: tianon/true
+    volumes:
+      - /data/db
+
+  nlp:
+    image: motiz88/corenlp:latest
+    ports:
+      - "${NLP_PORT}:${NLP_PORT}"
+
+  web:
+    build: ./web
+    command: npm start
+    depends_on:
+      - api
+    environment:
+      - NODE_ENV=development
+      - PORT=${WEB_PORT}
+      - REACT_APP_API_HOST=http://localhost:${API_PORT}
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+    volumes:
+      - ./web:/home/app/web
+      - /home/app/web/node_modules
